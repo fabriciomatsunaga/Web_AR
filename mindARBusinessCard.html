@@ -5,12 +5,30 @@
     <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v7.0.0/dist/aframe-extras.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const leftBtn = document.querySelector('#leftBtn');
+            const rightBtn = document.querySelector('#rightBtn');
+
+            leftBtn.addEventListener('click', event => {
+                console.log('left Button pressed');
+                // Exemplo: redireciona para a página mindARMusicBand.html
+                // window.location.href = "mindARMusicBand.html";
+            });
+            rightBtn.addEventListener('click', event => {
+                console.log('right Button Pressed');
+                // Exemplo: redireciona para a página FaceTracking.html
+                // window.location.href = "FaceTracking.html";
+            });
+        });
+    </script>
 </head>
 
 <body>
     <a-scene mindar-image="imageTargetSrc: ./markers/qrcode.mind;" color-space="sRGB"
         renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false"
-        device-orientation-permission-ui="enabled: false">
+        device-orientation-permission-ui="enabled: false" cursor="fuse: false; rayOrigin: mouse;"
+        raycaster="far: ${customFields.libVersion}; objects: .clickable">
         <a-assets>
             <img id="logo" src="./img/logo.png"></img>
             <img id="web" src="./img/web.png"></img>
@@ -18,20 +36,29 @@
             <img id="left" src="./img/left.png"></img>
             <img id="right" src="./img/right.png"></img>
 
-
-            <!-- <a-asset-item id="bearModel" src="./assets/models/musicband-bear/scene.gltf"></a-asset-item> -->
+            <video autoplay="false" loop="true" src="./videos/sintel.mp4"></video>
+            <!-- <a-asset-item id="bearModel"
+                src="./assets/models/musicband-bear/scene.gltf"></a-asset-item> -->
             <!-- <a-asset-item id="raccoonModel" src="./assets/models/musicband-raccoon/scene.gltf"></a-asset-item> -->
         </a-assets>
 
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
         <a-entity mindar-image-target="targetIndex: 0">
-
-            <a-image position="0 0.8 0" src="#logo"></a-image>
-            <a-image position="-0.3 0.05 0.1" scale="0.2 0.2 0.2" src="#web"></a-image>
+            <a-entity id="portifolio-panel">
+                <a-entity id="portifolio-item0">
+                    <a-image class="clickable" alpha-test="0.5" position="0 0 0" height="0.552" width="1" material
+                        geometry>
+                    </a-image>
+                </a-entity>
+                <a-entity id="portifolio-item1"></a-entity>
+                <a-entity id="portifolio-item2"></a-entity>
+            </a-entity>
+            <a-image visible="false" id="logo" position="0 0.8 0" src="#logo"></a-image>
+            <a-image visible="false" id="webBtn" position="-0.3 0.05 0.1" scale="0.2 0.2 0.2" src="#web"></a-image>
             <a-image position="0.3 0.05 0.1" scale="0.2 0.2 0.2" src="#location"></a-image>
-            <a-image position="-0.5 0.4 0.2" scale="0.2 0.2 0.2" src="#left"></a-image>
-            <a-image position="0.5 0.4 0.2" scale="0.2 0.2 0.2" src="#right"></a-image>
+            <a-image class="clickable" id="leftBtn" position="-0.5 0.4 0.2" scale="0.2 0.2 0.2" src="#left"></a-image>
+            <a-image class="clickable" id="rightBtn" position="0.5 0.4 0.2" scale="0.2 0.2 0.2" src="#right"></a-image>
 
         </a-entity>
 
