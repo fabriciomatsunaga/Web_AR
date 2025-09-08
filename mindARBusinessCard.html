@@ -25,7 +25,7 @@
 </head>
 
 <body>
-    <a-scene mindar-image="imageTargetSrc: ./markers/qrcode.mind;" color-space="sRGB"
+    <a-scene mindar-image="imageTargetSrc: ./markers/qrcode.mind; filterMinCF:0.1; filterBeta: 10" color-space="sRGB"
         renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false"
         device-orientation-permission-ui="enabled: false" cursor="fuse: false; rayOrigin: mouse;"
         raycaster="far: ${customFields.libVersion}; objects: .clickable">
@@ -35,8 +35,12 @@
             <img id="location" src="./img/location.png"></img>
             <img id="left" src="./img/left.png"></img>
             <img id="right" src="./img/right.png"></img>
+            <img id="musicbandPhoto" src="./img/musicbrand-photo.png">
+            <img id="chibaPhoto" src="./img/chiba-photo.png">
 
-            <video autoplay="false" loop="true" src="./videos/sintel.mp4"></video>
+
+
+            <!-- <video autoplay="false" src="./videos/sintel.mp4"></video> -->
             <!-- <a-asset-item id="bearModel"
                 src="./assets/models/musicband-bear/scene.gltf"></a-asset-item> -->
             <!-- <a-asset-item id="raccoonModel" src="./assets/models/musicband-raccoon/scene.gltf"></a-asset-item> -->
@@ -46,19 +50,36 @@
 
         <a-entity mindar-image-target="targetIndex: 0">
             <a-entity id="portifolio-panel">
-                <a-entity id="portifolio-item0">
+                <a-entity visible="false" id="portifolio-item0">
+                    <a-text value="Portfolio" color="black" align="center" width="2" position="0 0.4 0"></a-text>
                     <a-image class="clickable" alpha-test="0.5" position="0 0 0" height="0.552" width="1" material
                         geometry>
                     </a-image>
                 </a-entity>
-                <a-entity id="portifolio-item1"></a-entity>
-                <a-entity id="portifolio-item2"></a-entity>
+                <a-entity visible="false" id="portifolio-item1">
+                    <a-text value="Portfolio" color="black" align="center" width="2" position="0 0.4 0"></a-text>
+                    <a-image class="clickable" alpha-test="0.5" position="0 0 0" height="0.552" width="1" material
+                        geometry>
+                    </a-image>
+                </a-entity>
+                <a-entity visible="false" id="portifolio-item2">
+                    <a-text value="Portfolio" color="black" align="center" width="2" position="0 0.4 0"></a-text>
+                    <a-image class="clickable" alpha-test="0.5" position="0 0 0" height="0.552" width="1" material
+                        geometry>
+                    </a-image>
+                </a-entity>
             </a-entity>
-            <a-image visible="false" id="logo" position="0 0.8 0" src="#logo"></a-image>
+
+
+
+
+            <a-image class="clickable" id="leftBtn" position="-0.6 0.0 0.2" scale="0.2 0.2 0.2" src="#left"></a-image>
+            <a-image class="clickable" id="rightBtn" position="0.6 0.0 0.2" scale="0.2 0.2 0.2" src="#right"></a-image>
+
+            <a-image id="logo" position="0 0.8 0" src="#logo"></a-image>
             <a-image visible="false" id="webBtn" position="-0.3 0.05 0.1" scale="0.2 0.2 0.2" src="#web"></a-image>
-            <a-image position="0.3 0.05 0.1" scale="0.2 0.2 0.2" src="#location"></a-image>
-            <a-image class="clickable" id="leftBtn" position="-0.5 0.4 0.2" scale="0.2 0.2 0.2" src="#left"></a-image>
-            <a-image class="clickable" id="rightBtn" position="0.5 0.4 0.2" scale="0.2 0.2 0.2" src="#right"></a-image>
+            <a-image visible="false" position="0.3 0.05 0.1" scale="0.2 0.2 0.2" src="#location"></a-image>
+
 
         </a-entity>
 
