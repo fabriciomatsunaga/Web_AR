@@ -6,78 +6,236 @@
     <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v7.0.0/dist/aframe-extras.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const leftBtn = document.querySelector('#leftBtn');
-            const rightBtn = document.querySelector('#rightBtn');
+        const showInfo = () => {
 
-            leftBtn.addEventListener('click', event => {
-                console.log('left Button pressed');
-                // Exemplo: redireciona para a página mindARMusicBand.html
-                // window.location.href = "mindARMusicBand.html";
+            const profileButton = document.querySelector("#btnProfile");
+            const webButton = document.querySelector("#btnWeb");
+            const phoneButton = document.querySelector("#btnPhone");
+            const locationButton = document.querySelector("#btnLocation");
+
+            webButton.setAttribute("visible", true);
+            setTimeout(() => {
+                locationButton.setAttribute("visible", true);
+            }, 300);
+            setTimeout(() => {
+                profileButton.setAttribute("visible", true);
+            }, 600);
+            setTimeout(() => {
+                phoneButton.setAttribute("visible", true);
+            }, 900);
+        }
+
+        const showPortfolio = (done) => {
+            const portfolio = document.querySelector("#portfolio-panel");
+            const leftButton = document.querySelector("#leftBtn");
+            const rightButton = document.querySelector("#rightBtn");
+            //const paintandquestPreviewButton = document.querySelector("#paintandquest-preview-button");
+
+            const playButton = document.querySelector("#btnPlay")
+
+            let y = 0;
+            let currentItem = 0;
+
+            portfolio.setAttribute("visible", true);
+
+            const portfolioLink = () => {
+                if (currentItem === 0) {
+                    window.location.href = "./mindARMusicBand.html";
+                } else if (currentItem === 1) {
+                    window.location.href = "./fullFaceTracking.html";
+                } else if (currentItem === 2) {
+                    window.location.href = "./arPlaneDetection.html";
+                }
+            }
+
+            const showPortfolioItem = (item) => {
+                for (let i = 0; i <= 2; i++) {
+                    document.querySelector("#portfolio-item" + i).setAttribute("visible", i === item);
+                    document.querySelector("#portfolio-item" + i).addEventListener('click', () => {
+                        portfolioLink();
+                    });
+                }
+            }
+            const changePortfolioText = (item) => {
+                const text = document.querySelector("#portfolio-text");
+                switch (item) {
+                    case 0:
+                        text.setAttribute("value", "Image Tracking");
+                        break;
+                    case 1:
+                        text.setAttribute("value", "Face Tracking");
+                        break;
+                    case 2:
+                        text.setAttribute("value", "Plane Detection");
+                        break;
+                }
+            }
+
+            leftButton.setAttribute("visible", true);
+            rightButton.setAttribute("visible", true);
+            playButton.setAttribute('visible', true);
+
+            leftButton.addEventListener('click', () => {
+                currentItem = (currentItem + 1) % 3;
+                showPortfolioItem(currentItem);
+                changePortfolioText(currentItem);
             });
-            rightBtn.addEventListener('click', event => {
-                console.log('right Button Pressed');
-                // Exemplo: redireciona para a página FaceTracking.html
-                // window.location.href = "FaceTracking.html";
+            rightButton.addEventListener('click', () => {
+                currentItem = (currentItem - 1 + 3) % 3;
+                showPortfolioItem(currentItem);
+                changePortfolioText(currentItem);
             });
+
+            const webBtn = document.querySelector("#btnWeb");
+            webBtn.addEventListener('click', () => {
+                console.log("go to web");
+                window.location.href = "./mindARMusicBand.html";
+            });
+
+            playButton.addEventListener('click', () => {
+                portfolioLink();
+
+            });
+
+            const id = setInterval(() => {
+                y += 0.008;
+                if (y >= 0.1) {
+                    clearInterval(id);
+
+                    /*paintandquestPreviewButton.addEventListener('click', () => {
+                        paintandquestPreviewButton.setAttribute("visible", false);
+                        const testVideo = document.createElement("video");
+                        const canplayWebm = testVideo.canPlayType('video/webm; codecs="vp8, vorbis"');
+                        if (canplayWebm == "") {
+                            document.querySelector("#paintandquest-video-link").setAttribute("src", "#paintandquest-video-mp4");
+                            document.querySelector("#paintandquest-video-mp4").play();
+                        } else {
+                            document.querySelector("#paintandquest-video-link").setAttribute("src", "#paintandquest-video-webm");
+                            document.querySelector("#paintandquest-video-webm").play();
+                        }
+                    });*/
+
+                    setTimeout(() => {
+                        done();
+                    }, 500);
+                }
+                portfolio.setAttribute("position", "0 " + y + " -0.01");
+            }, 10);
+        }
+
+        const showLogo = (onDone) => {
+            const logo = document.querySelector("#logoPanel");
+            let z = -0.3;
+            const id = setInterval(() => {
+                z += 0.008;
+                if (z >= 0.3) {
+                    clearInterval(id);
+                    onDone();
+                }
+                logo.setAttribute("position", "0 0.8 " + z);
+            }, 10);
+        }
+
+        AFRAME.registerComponent('mytarget', {
+            init: function () {
+                this.el.addEventListener('targetFound', event => {
+                    console.log("target found");
+                    showLogo(() => {
+                        setTimeout(() => {
+                            showPortfolio(() => {
+                                setTimeout(() => {
+                                    showInfo();
+                                }, 300);
+                            });
+                        }, 300);
+                    })
+                    /*showAvatar(() => {
+                        setTimeout(() => {
+                            showPortfolio(() => {
+                                setTimeout(() => {
+                                    showInfo();
+                                }, 300);
+                            });
+                        }, 300);
+                    });*/
+                });
+                this.el.addEventListener('targetLost', event => {
+                    console.log("target lost");
+                });
+                //this.el.emit('targetFound');
+            }
         });
+
+        document.addEventListener('DOMContentLoaded', () => { });
     </script>
 </head>
 
 <body>
-    <a-scene mindar-image="imageTargetSrc: ./markers/qrcode.mind; filterMinCF:0.1; filterBeta: 1" color-space="sRGB"
+    <a-scene mindar-image="imageTargetSrc: ./markers/qrcode.mind; filterMinCF:0.01; filterBeta: 0.1" color-space="sRGB"
         renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false"
         device-orientation-permission-ui="enabled: false" cursor="fuse: false; rayOrigin: mouse;"
         raycaster="far: ${customFields.libVersion}; objects: .clickable">
         <a-assets>
             <img id="logo" src="./img/logo.png"></img>
-            <img id="web" src="./img/web.png"></img>
-            <img id="location" src="./img/location.png"></img>
+            <img id="webBtn" src="./img/btnWeb.png"></img>
+            <img id="locationBtn" src="./img/btnLocation.png"></img>
+            <img id="profileBtn" src="./img/btnProfile.png"></img>
+            <img id="phoneBtn" src="./img/btnPhone.png"></img>
+
+            <img id="playBtn" src="./img/btnPlay.png"></img>
             <img id="left" src="./img/left.png"></img>
             <img id="right" src="./img/right.png"></img>
             <img id="musicbandPhoto" src="./img/musicbrand-photo.png">
             <img id="chibaPhoto" src="./img/chiba-photo.png">
-            <!-- <a-asset-item id="bearModel" src="./assets/models/musicband-bear/scene.gltf"></a-asset-item> -->
-            <!-- <a-asset-item id="raccoonModel" src="./assets/models/musicband-raccoon/scene.gltf"></a-asset-item> -->
 
-            <!-- <video autoplay="false" src="./videos/sintel.mp4"></video> -->
 
         </a-assets>
 
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-        <a-entity id="mytarget" mindar-image-target="targetIndex: 0">
-            <a-entity id="portifolio-panel">
-                <a-entity id="portifolio-item0">
-                    <!-- <a-image position="0.0 0.0 0.2" height="0.555" width="1" src="#chibaPhoto"></a-image> -->
-                    <a-text value="Image Tracking" color="black" align="center" width="2" position="0 0.4 0"></a-text>
+        <a-entity id="mytarget" mindar-image-target="targetIndex: 0" mytarget>
+
+            <a-entity visible=false id="portfolio-panel">
+                <a-text value="Image Tracking" id="portfolio-text" color="black" align="center" width="2"
+                    position="0 0.4 0"></a-text>
+                <a-entity class="clickable" id="portfolio-item0">
+                    <a-image id="idImageTrack" position="0.0 0.0 0.2" height="0.55" width="1"
+                        src="#musicbandPhoto"></a-image>
+                </a-entity>
+                <a-entity id="portfolio-item1" visible=false>
                     <a-image class="clickable" alpha-test="0.5" position="0 0 0" height="0.552" width="1" material
                         geometry>
                     </a-image>
                 </a-entity>
-                <a-entity visible="false" id="portifolio-item1">
-                    <a-text value="Face Tracking" color="black" align="center" width="2" position="0 0.4 0"></a-text>
-                    <a-image class="clickable" alpha-test="0.5" position="0 0 0" height="0.552" width="1" material
-                        geometry>
-                    </a-image>
+                <a-entity id="portfolio-item2" visible=false>
+                    <a-image id="idPlaneDetection" position="0.0 0.0 0.2" height="0.55" width="1"
+                        src="#chibaPhoto"></a-image>
                 </a-entity>
-                <a-entity visible="false" id="portifolio-item2">
-                    <a-text value="Plane Detection" color="black" align="center" width="2" position="0 0.4 0"></a-text>
-                    <a-image class="clickable" alpha-test="0.5" position="0 0 0" height="0.552" width="1" material
-                        geometry>
-                    </a-image>
-                </a-entity>
+
+                <a-image class="clickable" id="leftBtn" position="-0.6 0.0 0.2" scale="0.2 0.2 0.2"
+                    src="#left"></a-image>
+                <a-image class="clickable" id="rightBtn" position="0.6 0.0 0.2" scale="0.2 0.2 0.2"
+                    src="#right"></a-image>
+
             </a-entity>
 
+            <a-image id="logoPanel" position="0 0.0 0" src="#logo"></a-image>
 
+            <a-image class="clickable" visible="false" id="btnPlay" position="0.0 0.1 0.3" height="0.15" width="0.15"
+                src="#playBtn"></a-image>
 
-            <a-image class="clickable" id="leftBtn" position="-0.6 0.0 0.2" scale="0.2 0.2 0.2" src="#left"></a-image>
-            <a-image class="clickable" id="rightBtn" position="0.6 0.0 0.2" scale="0.2 0.2 0.2" src="#right"></a-image>
-
-            <a-image id="logo" position="0 0.8 0" src="#logo"></a-image>
-            <a-image visible="false" id="webBtn" position="-0.3 0.05 0.1" scale="0.2 0.2 0.2" src="#web"></a-image>
-            <a-image visible="false" position="0.3 0.05 0.1" scale="0.2 0.2 0.2" src="#location"></a-image>
-
+            <a-image class="clickable" visible="false" id="btnWeb" position="-0.45 -0.5 0.1" height="0.15" width="0.15"
+                src="#webBtn"
+                animation="property: scale; to: 1.2 1.2 1.2; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate"></a-image>
+            <a-image class="clickable" visible="false" id="btnLocation" position="-0.15 -0.5 0.1" height="0.15"
+                width="0.15" src="#locationBtn"
+                animation="property: scale; to: 1.2 1.2 1.2; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate"></a-image>
+            <a-image class="clickable" visible="false" id="btnProfile" position="0.15 -0.5 0.1" height="0.15"
+                width="0.15" src="#profileBtn"
+                animation="property: scale; to: 1.2 1.2 1.2; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate"></a-image>
+            <a-image class="clickable" visible="false" id="btnPhone" position="0.45 -0.5 0.1" height="0.15" width="0.15"
+                src="#phoneBtn"
+                animation="property: scale; to: 1.2 1.2 1.2; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate"></a-image>
 
         </a-entity>
     </a-scene>
