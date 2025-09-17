@@ -45,11 +45,13 @@
                     window.location.href = "./fullFaceTracking.html";
                 } else if (currentItem === 2) {
                     window.location.href = "./arPlaneDetection.html";
+                } else if (currentItem === 3) {
+                    window.location.href = "./modelViewer.html";
                 }
             }
 
             const showPortfolioItem = (item) => {
-                for (let i = 0; i <= 2; i++) {
+                for (let i = 0; i <= 3; i++) {
                     document.querySelector("#portfolio-item" + i).setAttribute("visible", i === item);
                     document.querySelector("#portfolio-item" + i).addEventListener('click', () => {
                         portfolioLink();
@@ -68,6 +70,9 @@
                     case 2:
                         text.setAttribute("value", "Plane Detection");
                         break;
+                    case 3:
+                        text.setAttribute("value", "Model Viewer");
+                        break;
                 }
             }
 
@@ -76,12 +81,12 @@
             playButton.setAttribute('visible', true);
 
             leftButton.addEventListener('click', () => {
-                currentItem = (currentItem + 1) % 3;
+                currentItem = (currentItem + 1) % 4;
                 showPortfolioItem(currentItem);
                 changePortfolioText(currentItem);
             });
             rightButton.addEventListener('click', () => {
-                currentItem = (currentItem - 1 + 3) % 3;
+                currentItem = (currentItem - 1 + 4) % 4;
                 showPortfolioItem(currentItem);
                 changePortfolioText(currentItem);
             });
@@ -210,6 +215,11 @@
                 <a-entity id="portfolio-item2" visible=false>
                     <a-image id="idPlaneDetection" position="0.0 0.0 0.2" height="0.55" width="1"
                         src="#chibaPhoto"></a-image>
+                </a-entity>
+                <a-entity id="portfolio-item3" visible=false>
+                    <a-image class="clickable" alpha-test="0.5" position="0 0 0" height="0.552" width="1" material
+                        geometry>
+                    </a-image>
                 </a-entity>
 
                 <a-image class="clickable" id="leftBtn" position="-0.6 0.0 0.2" scale="0.2 0.2 0.2"
