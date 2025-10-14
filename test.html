@@ -1,0 +1,55 @@
+<html>
+
+<head>
+  <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+  <!-- <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script> -->
+  <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v7.0.0/dist/aframe-extras.min.js"></script>
+
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+
+</head>
+
+<body style='margin : 0px; overflow: hidden;'>
+  <div class="arjs-loader">
+    <div>Carregando..</div>
+    <button id="btn1"> botao 1</button>
+  </div>
+  <a-scene embedded arjs>
+    <a-assets>
+      <a-asset-item id="robot" src="/assets/models/robotExpressive/scene.gltf"></a-asset-item>
+    </a-assets>
+    <a-marker preset="hiro">
+      <a-entity id="robotEntity" scale="0.3 0.3 0.3" rotation="-90 0 0 " gltf-model="#robot"
+        animation-mixer="clip: Dance; loop: repeat; timeScale: 1"></a-entity>
+      <!-- <a-text value="Bloco G" rotation="-90 0 0" position="-0.5 2.5 0" color="black" animation="property: position; to: -0.5 3.0 0.2; dur: 2000; easing: linear; loop: true"></a-text> -->
+      <a-text value="Bloco G" rotation="-90 0 0" position="-0.4 0.0 0.4" color="black"
+        animation="property: scale; from: 1 1 1; to: 1.4 1.4 1.4; dur: 2000; easing: easeInOutQuad; loop: true; dir: alternate"></a-text>
+      <!-- <a-entity position="0 1.5 0" rotation="0 0 0" scale="5 5 5" text="value: Este sera o texto que estou colocando; color: black;"></a-entity> -->
+      <!-- <a-box position="0 0.5 0" material="color:red;" animation="property: rotation; to: 360 360 0; loop: true; dur: 3000"></a-box> -->
+    </a-marker>
+    <a-entity camera></a-entity>
+  </a-scene>
+  <script>
+    btn1 = document.getElementById("btn1");
+    // lista os nomes de animações e permite alternar clicando no modelo
+    const robotEl = document.querySelector('#robotEntity');
+    robotEl.addEventListener('model-loaded', (e) => {
+      // tentativa de obter as animações do glTF
+      const maybeGltf = e.detail.model || e.detail.gltf || {};
+      const animations = (maybeGltf.animations || (maybeGltf.userData && maybeGltf.userData.gltfAnimations) || []);
+      const names = animations.map(a => a.name).filter(Boolean);
+      console.log('Animações encontradas:', names);
+      if (!names.length) return;
+
+      // ciclo simples: clique para trocar de animação
+      let i = 0;
+      btn1.addEventListener('click', () => {
+        i = (i + 1) % names.length;
+        robotEl.setAttribute('animation-mixer', `clip: ${names[i]}; loop: repeat`);
+        console.log('Trocando para', names[i]);
+      });
+    });
+  </script>
+</body>
+
+</html>

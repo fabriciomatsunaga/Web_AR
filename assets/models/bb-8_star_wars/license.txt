@@ -1,0 +1,11 @@
+Model Information:
+* title:	BB-8 (Star Wars)
+* source:	https://sketchfab.com/3d-models/bb-8-star-wars-575fedbe9dd94b86b6857411b7ac18a3
+* author:	ChoochooLi (https://sketchfab.com/ChoochooLi)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "BB-8 (Star Wars)" (https://sketchfab.com/3d-models/bb-8-star-wars-575fedbe9dd94b86b6857411b7ac18a3) by ChoochooLi (https://sketchfab.com/ChoochooLi) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
