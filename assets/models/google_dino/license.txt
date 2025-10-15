@@ -1,0 +1,11 @@
+Model Information:
+* title:	Google Dino
+* source:	https://sketchfab.com/3d-models/google-dino-6457715ad6ac438ba7502d43f3e8ae37
+* author:	tiunov.se (https://sketchfab.com/tiunov.se)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Google Dino" (https://sketchfab.com/3d-models/google-dino-6457715ad6ac438ba7502d43f3e8ae37) by tiunov.se (https://sketchfab.com/tiunov.se) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

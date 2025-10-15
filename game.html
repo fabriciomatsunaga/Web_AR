@@ -11,22 +11,76 @@
   <title>My AR Game</title>
 </head>
 
-<body>
-
-
+<body style="margin: 0; overflow: hidden;">
   <a-scene embedded arjs>
-
     <a-assets>
       <!-- Modelo do carro -->
-      <a-asset-item id="carModel" src="/assets/models/car/scene.gltf"></a-asset-item>
+      <a-asset-item id="carModel" src="/assets/models/google_dino/scene.gltf"></a-asset-item>
       <!-- Obstáculo -->
       <a-asset-item id="obstacleModel" src="/assets/models/obstacle/scene.gltf"></a-asset-item>
     </a-assets>
 
+    <!-- Marcador AR -->
     <a-marker preset="hiro">
-
+      <!-- Carro do jogador -->
+      <a-entity id="playerCar" gltf-model="#carModel" scale="0.5 0.5 0.5" position="90 0 0"></a-entity>
     </a-marker>
+
+    <!-- Obstáculos -->
+    <a-entity id="obstacles"></a-entity>
+
+    <a-entity camera></a-entity>
   </a-scene>
+
+  <script>
+    const playerCar = document.querySelector('#playerCar');
+    const obstaclesContainer = document.querySelector('#obstacles');
+    let score = 0;
+
+    // Função para criar obstáculos
+    // function createObstacle() {
+    //   const obstacle = document.createElement('a-entity');
+    //   obstacle.setAttribute('gltf-model', '#obstacleModel');
+    //   obstacle.setAttribute('scale', '0.3 0.3 0.3');
+    //   obstacle.setAttribute('position', `${Math.random() * 2 - 1} 0 -5`);
+    //   obstacle.setAttribute('animation', 'property: position; to: 0 0 5; dur: 5000; easing: linear; loop: false');
+    //   obstaclesContainer.appendChild(obstacle);
+
+    //   // Remover obstáculo quando sair da tela
+    //   obstacle.addEventListener('animationcomplete', () => {
+    //     obstaclesContainer.removeChild(obstacle);
+    //   });
+
+    //   // Detectar colisão
+    //   setInterval(() => {
+    //     const playerPos = playerCar.object3D.position;
+    //     const obstaclePos = obstacle.object3D.position;
+    //     const distance = playerPos.distanceTo(obstaclePos);
+
+    //     if (distance < 0.5) {
+    //       alert('Game Over! Pontuação: ' + score);
+    //       location.reload();
+    //     }
+    //   }, 100);
+    // }
+
+    // Criar obstáculos a cada 2 segundos
+    setInterval(() => {
+      createObstacle();
+      score++;
+    }, 2000);
+
+    // Mover o carro do jogador
+    window.addEventListener('keydown', (e) => {
+      const position = playerCar.getAttribute('position');
+      if (e.key === 'ArrowLeft') {
+        position.x -= 0.2;
+      } else if (e.key === 'ArrowRight') {
+        position.x += 0.2;
+      }
+      playerCar.setAttribute('position', position);
+    });
+  </script>
 </body>
 
 </html>

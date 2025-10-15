@@ -18,16 +18,16 @@
     <a-marker id="link" preset="hiro">
       <a-image rotation="-90 0 0 " position="-0.1 0.0 -2.2" height="1" width="1" src="./img/logo.png"
         animation="property: scale; from: 1 1 1; to: 1.4 1.4 1.4; dur: 2000; easing: easeInOutQuad; loop: true; dir: alternate"></a-image>
-      <a-entity id="modelEntity" scale="0.3 0.3 0.3" rotation="-90 0 0 " gltf-model="#model"></a-entity>
-      <a-text id="animatedText" value="Estude Ciencia da Computacao na UEMS" rotation="-90 0 0" position="-2.2 0.0 -1.4"
-        color="white"
-        animation="property: scale; from: 1 1 1; to: 1.4 1.4 1.4; dur: 2000; easing: easeInOutQuad; loop: true; dir: alternate"></a-text>
+      <a-entity id="modelEntity" scale="0.2 0.2 0.2" rotation="-90 0 0 " gltf-model="#model"></a-entity>
+      <a-text id="animatedText" value="Estude Ciencia da Computacao na UEMS" align="center" rotation="-90 0 0"
+        position="0 0.0 -1.0"
+        animation="property: scale; from: 0.3 0.3 0.3; to: 0.5 0.5 0.5; dur: 2000; easing: easeInOutQuad; loop: true; dir: alternate"></a-text>
     </a-marker>
     <a-entity camera cursor="rayOrigin: mouse"></a-entity>
   </a-scene>
   <script>
     const txt = document.querySelector('#animatedText');
-    const colors = ['#ffffff', '#ffcc00', '#00d1ff', '#ff66aa'];
+    const colors = ['#000000', '#ffcc00', '#00d1ff', '#ff66aa'];
     let ci = 0;
     setInterval(() => {
       ci = (ci + 1) % colors.length;
