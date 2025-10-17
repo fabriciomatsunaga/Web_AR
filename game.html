@@ -1,85 +1,206 @@
 <html>
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+  <script src="./javascript/aframe.min.js"></script>
   <!-- <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script> -->
   <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v7.0.0/dist/aframe-extras.min.js"></script>
 
   <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-  <title>My AR Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
-<body style="margin: 0; overflow: hidden;">
-  <a-scene embedded arjs>
+<body style='margin : 0px; overflow: hidden;'>
+  <div class="arjs-loader">
+    <div>Carregando..</div>
+  </div>
+
+  <a-scene renderer="logarithmicDepthBuffer: true; precision: medium;" embedded
+    arjs="trackingMethod: best; sourceType: webcam;debugUIEnabled: false;">
     <a-assets>
-      <!-- Modelo do carro -->
-      <a-asset-item id="carModel" src="/assets/models/google_dino/scene.gltf"></a-asset-item>
-      <!-- Obstáculo -->
-      <a-asset-item id="obstacleModel" src="/assets/models/obstacle/scene.gltf"></a-asset-item>
+      <a-asset-item id="model" src="./assets/models/google_dino/scene.gltf"></a-asset-item>
     </a-assets>
-
-    <!-- Marcador AR -->
     <a-marker preset="hiro">
-      <!-- Carro do jogador -->
-      <a-entity id="playerCar" gltf-model="#carModel" scale="0.5 0.5 0.5" position="90 0 0"></a-entity>
+      <a-entity id="modelEntity" scale="0.1 0.1 0.1" rotation="0 90 -90 " gltf-model="#model"
+        animation-mixer="clip: Take 001; loop: repeat; timeScale: 1"></a-entity>
+      <!-- <a-text value="Bloco G" rotation="-90 0 0" position="-0.5 2.5 0" color="black" animation="property: position; to: -0.5 3.0 0.2; dur: 2000; easing: linear; loop: true"></a-text> -->
+      <a-text value="Bloco G" rotation="-90 0 0" position="-0.4 0.0 0.4" color="black"
+        animation="property: scale; from: 1 1 1; to: 1.4 1.4 1.4; dur: 2000; easing: easeInOutQuad; loop: true; dir: alternate"></a-text>
+
+      <a-box id="Bumper1" rotation="0 0 0" position='3 0.05 -0.1' depth="0.4" height="0.1" width="0.1"
+        material='opacity: 0.9; side:double; color:blue;'></a-box>
+      <!-- <a-box id="Bumper2" rotation="0 180 0" position='3.1 0.05 -0.1' depth="0.4" height="0.1" width="0.1"
+        material='opacity: 0.9; side:double; color:blue;'></a-box> -->
+
     </a-marker>
+    <div style="position: fixed; top: 10px; width: 100%; text-align: center; z-index: 1; color: black;">
 
-    <!-- Obstáculos -->
-    <a-entity id="obstacles"></a-entity>
+      <div><strong>Aponte acamera para o marcador</strong></div>
+      <div><button id="btnRestart"> Reiniciar</button></div>
+      <div id="score" style="background-color: white; "> Pontuação: 0</div>
 
+    </div>
+    <div style="position: fixed; bottom: 40px; width: 100%;  text-align: center; z-index: 1; color: white;">
+      <button id="btnJump" style="padding: 30px;">Pular</button>
+    </div>
     <a-entity camera></a-entity>
+
   </a-scene>
-
   <script>
-    const playerCar = document.querySelector('#playerCar');
-    const obstaclesContainer = document.querySelector('#obstacles');
-    let score = 0;
+    window.onload = () => {
+      var intervalLength = 60; // determina a velocidade da animação (ms)
+      var scene = document.querySelector('a-scene');
+      var modelLoaded = false;
 
-    // Função para criar obstáculos
-    // function createObstacle() {
-    //   const obstacle = document.createElement('a-entity');
-    //   obstacle.setAttribute('gltf-model', '#obstacleModel');
-    //   obstacle.setAttribute('scale', '0.3 0.3 0.3');
-    //   obstacle.setAttribute('position', `${Math.random() * 2 - 1} 0 -5`);
-    //   obstacle.setAttribute('animation', 'property: position; to: 0 0 5; dur: 5000; easing: linear; loop: false');
-    //   obstaclesContainer.appendChild(obstacle);
+      var jumping = false;
+      var faling = false;
+      var start = false;
+      var pontuacao = 0;
+      var gameOver = false;
 
-    //   // Remover obstáculo quando sair da tela
-    //   obstacle.addEventListener('animationcomplete', () => {
-    //     obstaclesContainer.removeChild(obstacle);
-    //   });
+      var marker = document.querySelector('a-marker');
 
-    //   // Detectar colisão
-    //   setInterval(() => {
-    //     const playerPos = playerCar.object3D.position;
-    //     const obstaclePos = obstacle.object3D.position;
-    //     const distance = playerPos.distanceTo(obstaclePos);
+      marker.addEventListener('markerFound', () => {
+        console.log('markerFound');
+        start = true;
+      });
 
-    //     if (distance < 0.5) {
-    //       alert('Game Over! Pontuação: ' + score);
-    //       location.reload();
-    //     }
-    //   }, 100);
-    // }
+      marker.addEventListener('markerLost', () => {
+        console.log('markerLost');
+        start = false;
+      });
 
-    // Criar obstáculos a cada 2 segundos
-    setInterval(() => {
-      createObstacle();
-      score++;
-    }, 2000);
+      // associando variaveis aos elementos
+      var model = document.getElementById('modelEntity');
+      var Bumper1 = document.getElementById('Bumper1');
+      // var Bumper2 = document.getElementById('Bumper2');
+      var btnJump = document.getElementById('btnJump');
+      var score = document.getElementById('score');
 
-    // Mover o carro do jogador
-    window.addEventListener('keydown', (e) => {
-      const position = playerCar.getAttribute('position');
-      if (e.key === 'ArrowLeft') {
-        position.x -= 0.2;
-      } else if (e.key === 'ArrowRight') {
-        position.x += 0.2;
+      // propriedades de posição
+      var modelProprieties = { x: 0, y: 0, z: 0 };
+      var Bumper1Proprieties = { x: 3, y: 0.05, z: -0.1 };
+
+
+      btnJump.addEventListener('click', () => {
+        if (faling == false && !gameOver) {
+          console.log('Pular!');
+          jumping = !jumping;
+        }
+      });
+
+      // restart handler
+      btnRestart.addEventListener('click', restartGame);
+
+      function restartGame() {
+        // reset estados
+        jumping = false;
+        faling = false;
+        gameOver = false;
+        pontuacao = 0;
+        score.innerHTML = "Pontuação: " + pontuacao;
+
+        // reset posições (atualiza os objetos já existentes)
+        modelProprieties.x = 0;
+        modelProprieties.y = 0;
+        modelProprieties.z = 0;
+
+        Bumper1Proprieties.x = 3;
+        Bumper1Proprieties.y = 0.05;
+        Bumper1Proprieties.z = -0.1;
+
+        // aplicar posições imediatamente
+        try {
+          model.setAttribute('position', modelProprieties.x + ' ' + modelProprieties.y + ' ' + modelProprieties.z);
+          Bumper1.setAttribute('position', Bumper1Proprieties.x + ' ' + Bumper1Proprieties.y + ' ' + Bumper1Proprieties.z);
+          // Bumper2.setAttribute('position', Bumper2Proprieties.x + ' ' + Bumper2Proprieties.y + ' ' + Bumper2Proprieties.z);
+          // restaurar material caso tenha sido alterado no game over
+          model.setAttribute('material', 'color: white;');
+        } catch (e) {
+          console.warn('Erro ao aplicar reset de posições:', e);
+        }
+
+        // opcional: reiniciar start se o marker já estiver visível
+        // start = true; // descomente se quiser reiniciar imediatamente mesmo sem recolher markerFound
       }
-      playerCar.setAttribute('position', position);
-    });
+
+
+
+
+      // preparar bounding boxes (reutilizadas a cada tick)
+      var bboxModel = new THREE.Box3();
+      var bboxB1 = new THREE.Box3();
+
+      // saber quando o modelo glTF está pronto
+      model.addEventListener('model-loaded', () => {
+        modelLoaded = true;
+        console.log('model-loaded');
+      });
+
+      // pontuação a cada segundo enquanto start for true
+      setInterval(function () {
+        if (start != false && gameOver == false) {
+          pontuacao += 1;
+          score.innerHTML = "Pontuação: " + pontuacao;
+        }
+      }, 1000);
+
+      // loop principal de movimento
+      setInterval(function () {
+        if (start != false && gameOver == false) {
+          // pulo
+          if (jumping && modelProprieties.z > -0.8) {
+            modelProprieties.z -= 0.05;
+          } else {
+            if (modelProprieties.z < 0) {
+              modelProprieties.z += 0.05;
+              faling = true;
+              jumping = false;
+            } else {
+              faling = false;
+              jumping = false;
+            }
+          }
+
+          // mover bumpers (cada um com velocidade/leitura simples)
+          Bumper1Proprieties.x -= 0.05;
+          if (Bumper1Proprieties.x < -2) {
+            Bumper1Proprieties.x = 3;
+          }
+
+          // Bumper2Proprieties.x -= 0.04;
+          // if (Bumper2Proprieties.x < -2.5) {
+          //   Bumper2Proprieties.x = 3.5;
+          // }
+
+          // aplicar posições aos elementos na cena
+          Bumper1.setAttribute('position', Bumper1Proprieties.x + ' ' + Bumper1Proprieties.y + ' ' + Bumper1Proprieties.z);
+          // Bumper2.setAttribute('position', Bumper2Proprieties.x + ' ' + Bumper2Proprieties.y + ' ' + Bumper2Proprieties.z);
+          model.setAttribute('position', modelProprieties.x + ' ' + modelProprieties.y + ' ' + modelProprieties.z);
+
+          // verificar colisão quando o modelo e bumpers estiverem prontos
+          if (modelLoaded) {
+            // construir bounding boxes a partir dos object3D
+            try {
+              bboxModel.setFromObject(model.object3D);
+              bboxB1.setFromObject(Bumper1.object3D);
+
+
+              if (bboxModel.intersectsBox(bboxB1)) {
+                // colisão detectada
+                gameOver = true;
+                console.log('Colisão detectada! Game over.');
+                score.innerHTML = "Game Over! Pontuação: " + pontuacao;
+                // opcional: marcar visualmente o modelo
+                model.setAttribute('material', 'color: red;');
+              }
+            } catch (e) {
+              // em alguns casos object3D não está pronto; ignorar erros temporários
+              console.warn('Erro ao calcular bounding box:', e);
+            }
+          }
+        }
+      }, intervalLength);
+    }
   </script>
 </body>
 
