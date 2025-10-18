@@ -4,9 +4,9 @@
   <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
   <!-- <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script> -->
   <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v7.0.0/dist/aframe-extras.min.js"></script>
-
   <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-  <!-- UI fix: coloque a UI fora do <a-scene> e use esta classe para centralizar no celular -->
+  <script src="./javascript/gestures.js"></script>
+
   <style>
     .fixed-ui {
       position: fixed;
@@ -28,7 +28,7 @@
       background: transparent;
       padding: 6px 12px;
       font-weight: 600;
-      -webkit-user-select: none;
+
     }
 
     @media (max-width: 600px) {
@@ -62,7 +62,6 @@
 
     </a-marker>
 
-
     <a-entity camera></a-entity>
   </a-scene>
   <!-- UI fixa para todas as telas (inclui o texto e a pontuação) -->
@@ -71,7 +70,7 @@
       <div><strong>Aponte a camera para o marcador</strong></div>
     </div>
   </div>
-  <script src="./javascript/gestures.js"></script>
+
 </body>
 
 </html>

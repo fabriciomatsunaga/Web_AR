@@ -30,7 +30,6 @@
       background: transparent;
       padding: 6px 12px;
       font-weight: 600;
-      -webkit-user-select: none;
     }
 
     @media (max-width: 600px) {
@@ -63,7 +62,6 @@
         gltf-model="#cactus"></a-entity>
 
     </a-marker>
-
 
     <!-- Game Over overlay (inicialmente oculto) -->
     <div id="gameOverUI" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:10000;
@@ -174,9 +172,6 @@
         } catch (e) {
           console.warn('Erro ao aplicar reset de posições:', e);
         }
-
-        // opcional: reiniciar start se o marker já estiver visível
-        // start = true; // descomente se quiser reiniciar imediatamente mesmo sem recolher markerFound
       }
 
       // preparar bounding boxes (reutilizadas a cada tick)
@@ -190,7 +185,6 @@
       // saber quando o modelo glTF está pronto
       model.addEventListener('model-loaded', () => {
         modelLoaded = true;
-
       });
 
       // pontuação a cada segundo enquanto start for true
@@ -224,7 +218,6 @@
           if (Bumper1Proprieties.x < -2) {
             Bumper1Proprieties.x = 3;
           }
-
 
           // aplicar posições aos elementos na cena
           Bumper1.setAttribute('position', Bumper1Proprieties.x + ' ' + Bumper1Proprieties.y + ' ' + Bumper1Proprieties.z);
