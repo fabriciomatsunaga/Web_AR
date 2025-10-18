@@ -7,6 +7,39 @@
 
   <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- UI fix: coloque a UI fora do <a-scene> e use esta classe para centralizar no celular -->
+  <style>
+    .fixed-ui {
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: env(safe-area-inset-top, 10px);
+      z-index: 10000;
+      display: flex;
+      justify-content: center;
+      pointer-events: none;
+      /* permite tocar através da UI, inner elements podem aceitar cliques */
+    }
+
+    .fixed-ui .ui-inner {
+      pointer-events: auto;
+      /* ativa interações internas (botões, etc) */
+      color: orangered;
+      text-align: center;
+      background: transparent;
+      padding: 6px 12px;
+      font-weight: 600;
+      -webkit-user-select: none;
+    }
+
+    @media (max-width: 600px) {
+      .fixed-ui .ui-inner {
+        font-size: 16px;
+        padding: 8px 14px;
+      }
+    }
+  </style>
 </head>
 
 <body style='margin : 0px; overflow: hidden;'>
@@ -29,14 +62,8 @@
       <a-entity id="Bumper1" id="cactusModel" rotation="-90 0 0" position='1  0.1' scale="0.2 0.2 0.2"
         gltf-model="#cactus"></a-entity>
 
-
     </a-marker>
-    <div style="position: fixed; top: 10px; width: 100%; text-align: center; z-index: 1; color: orangered;">
 
-      <div><strong>Aponte acamera para o marcador</strong></div>
-      <div id="score"> Pontuação: 0</div>
-
-    </div>
 
     <!-- Game Over overlay (inicialmente oculto) -->
     <div id="gameOverUI" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:10000;
@@ -52,6 +79,15 @@
     <a-entity camera></a-entity>
 
   </a-scene>
+
+  <!-- UI fixa para todas as telas (inclui o texto e a pontuação) -->
+  <div class="fixed-ui">
+    <div class="ui-inner">
+      <div><strong>Aponte a camera para o marcador</strong></div>
+      <div id="score">Pontuação: 0</div>
+    </div>
+  </div>
+
   <script>
     window.onload = () => {
       var intervalLength = 60; // determina a velocidade da animação (ms)
