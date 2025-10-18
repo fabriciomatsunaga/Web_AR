@@ -13,21 +13,24 @@
   <div class="arjs-loader">
     <div>Carregando..</div>
   </div>
-  <div style="position: fixed; top: 10px; width: 100%; text-align: center; z-index: 1; color: black;"><strong>Aponte a camera para o marcador</strong><br>
-  <button id="btn1"> Trocar Movimento</button></div>
-  <a-scene embedded arjs>
+  <div style="position: fixed; top: 10px; width: 100%; text-align: center; z-index: 1; color: orangered;">
+    <strong>Aponte a camera para o marcador</strong><br>
+    <button id="btn1"> Trocar Movimento</button>
+  </div>
+  <a-scene renderer="logarithmicDepthBuffer: true; precision: medium;" embedded
+    arjs="trackingMethod: best; sourceType: webcam;debugUIEnabled: false;">
     <a-assets>
       <a-asset-item id="robot" src="./assets/models/robotExpressive/scene.gltf"></a-asset-item>
     </a-assets>
     <a-marker preset="hiro">
       <a-entity id="robotEntity" scale="0.3 0.3 0.3" rotation="-90 0 0 " gltf-model="#robot"
         animation-mixer="clip: Dance; loop: repeat; timeScale: 1"></a-entity>
-      <!-- <a-text value="Bloco G" rotation="-90 0 0" position="-0.5 2.5 0" color="black" animation="property: position; to: -0.5 3.0 0.2; dur: 2000; easing: linear; loop: true"></a-text> -->
-      <a-text value="Bloco G" rotation="-90 0 0" position="-0.4 0.0 0.4" color="black"
+
+      <a-text value="Bloco G" rotation="-90 0 0" position="-0.4 0.0 0.4" color="orangered"
         animation="property: scale; from: 1 1 1; to: 1.4 1.4 1.4; dur: 2000; easing: easeInOutQuad; loop: true; dir: alternate"></a-text>
-      <!-- <a-entity position="0 1.5 0" rotation="0 0 0" scale="5 5 5" text="value: Este sera o texto que estou colocando; color: black;"></a-entity> -->
-      <!-- <a-box position="0 0.5 0" material="color:red;" animation="property: rotation; to: 360 360 0; loop: true; dur: 3000"></a-box> -->
+
     </a-marker>
+
     <a-entity camera></a-entity>
   </a-scene>
   <script>

@@ -18,29 +18,36 @@
     arjs="trackingMethod: best; sourceType: webcam;debugUIEnabled: false;">
     <a-assets>
       <a-asset-item id="model" src="./assets/models/google_dino/scene.gltf"></a-asset-item>
+      <a-asset-item id="cactus" src="./assets/models/voxel_cactus_1x2/scene.gltf"></a-asset-item>
     </a-assets>
     <a-marker preset="hiro">
       <a-entity id="modelEntity" scale="0.1 0.1 0.1" rotation="0 90 -90 " gltf-model="#model"
         animation-mixer="clip: Take 001; loop: repeat; timeScale: 1"></a-entity>
-      <!-- <a-text value="Bloco G" rotation="-90 0 0" position="-0.5 2.5 0" color="black" animation="property: position; to: -0.5 3.0 0.2; dur: 2000; easing: linear; loop: true"></a-text> -->
-      <a-text value="Bloco G" rotation="-90 0 0" position="-0.4 0.0 0.4" color="black"
-        animation="property: scale; from: 1 1 1; to: 1.4 1.4 1.4; dur: 2000; easing: easeInOutQuad; loop: true; dir: alternate"></a-text>
 
-      <a-box id="Bumper1" rotation="0 0 0" position='3 0.05 -0.1' depth="0.4" height="0.1" width="0.1"
-        material='opacity: 0.9; side:double; color:blue;'></a-box>
-      <!-- <a-box id="Bumper2" rotation="0 180 0" position='3.1 0.05 -0.1' depth="0.4" height="0.1" width="0.1"
-        material='opacity: 0.9; side:double; color:blue;'></a-box> -->
+      <a-text value="Bloco G" rotation="-90 0 0" position="-0.4 0.0 0.8" color="orangered"
+        animation="property: scale; from: 1 1 1; to: 1.4 1.4 1.4; dur: 2000; easing: easeInOutQuad; loop: true; dir: alternate"></a-text>
+      <a-entity id="Bumper1" id="cactusModel" rotation="-90 0 0" position='1  0.1' scale="0.2 0.2 0.2"
+        gltf-model="#cactus"></a-entity>
+
 
     </a-marker>
-    <div style="position: fixed; top: 10px; width: 100%; text-align: center; z-index: 1; color: black;">
+    <div style="position: fixed; top: 10px; width: 100%; text-align: center; z-index: 1; color: orangered;">
 
       <div><strong>Aponte acamera para o marcador</strong></div>
-      <div><button id="btnRestart"> Reiniciar</button></div>
-      <div id="score" style="background-color: white; "> Pontuação: 0</div>
+      <div id="score"> Pontuação: 0</div>
 
     </div>
-    <div style="position: fixed; bottom: 40px; width: 100%;  text-align: center; z-index: 1; color: white;">
-      <button id="btnJump" style="padding: 30px;">Pular</button>
+
+    <!-- Game Over overlay (inicialmente oculto) -->
+    <div id="gameOverUI" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:10000;
+        align-items:center; justify-content:center; pointer-events:auto;">
+      <div style="background:#fff; color:#111; padding:20px; border-radius:10px; text-align:center; min-width:260px;">
+        <h2 id="gameOverTitle" style="margin:0 0 8px;">Game Over</h2>
+        <div id="finalScore" style="font-size:18px; margin-bottom:12px;">Pontuação: 0</div>
+        <div style="display:flex; gap:12px; justify-content:center;">
+          <button id="btnRestartOverlay" style="padding:10px 14px;">Reiniciar</button>
+        </div>
+      </div>
     </div>
     <a-entity camera></a-entity>
 
@@ -48,6 +55,8 @@
   <script>
     window.onload = () => {
       var intervalLength = 60; // determina a velocidade da animação (ms)
+      var bumperSpeed = 0.05; // determina a velocidade da animação (ms)
+
       var scene = document.querySelector('a-scene');
       var modelLoaded = false;
 
@@ -72,24 +81,35 @@
       // associando variaveis aos elementos
       var model = document.getElementById('modelEntity');
       var Bumper1 = document.getElementById('Bumper1');
-      // var Bumper2 = document.getElementById('Bumper2');
-      var btnJump = document.getElementById('btnJump');
+
+
+      // var btnJump = document.getElementById('btnJump');
+      var btnJump = document.body
       var score = document.getElementById('score');
+
+      // elementos do overlay de Game Over
+      var gameOverUI = document.getElementById('gameOverUI');
+      var finalScore = document.getElementById('finalScore');
+      var btnRestartOverlay = document.getElementById('btnRestartOverlay');
+      var btnCloseOverlay = document.getElementById('btnCloseOverlay');
 
       // propriedades de posição
       var modelProprieties = { x: 0, y: 0, z: 0 };
-      var Bumper1Proprieties = { x: 3, y: 0.05, z: -0.1 };
+      var Bumper1Proprieties = { x: 3, y: 0, z: 0.1 };
 
 
-      btnJump.addEventListener('click', () => {
+      btnJump.addEventListener('click', (e) => {
+        if (e.target.closest('button') || e.target.closest('#gameOverUI') || e.target.closest('#score')) return;
         if (faling == false && !gameOver) {
           console.log('Pular!');
           jumping = !jumping;
         }
       });
 
-      // restart handler
-      btnRestart.addEventListener('click', restartGame);
+      if (btnRestartOverlay) btnRestartOverlay.addEventListener('click', () => {
+        gameOverUI.style.display = 'none';
+        restartGame();
+      });
 
       function restartGame() {
         // reset estados
@@ -98,6 +118,7 @@
         gameOver = false;
         pontuacao = 0;
         score.innerHTML = "Pontuação: " + pontuacao;
+        bumperSpeed = 0.05;
 
         // reset posições (atualiza os objetos já existentes)
         modelProprieties.x = 0;
@@ -105,16 +126,14 @@
         modelProprieties.z = 0;
 
         Bumper1Proprieties.x = 3;
-        Bumper1Proprieties.y = 0.05;
-        Bumper1Proprieties.z = -0.1;
+        Bumper1Proprieties.y = 0;
+        Bumper1Proprieties.z = 0.1;
 
         // aplicar posições imediatamente
         try {
           model.setAttribute('position', modelProprieties.x + ' ' + modelProprieties.y + ' ' + modelProprieties.z);
           Bumper1.setAttribute('position', Bumper1Proprieties.x + ' ' + Bumper1Proprieties.y + ' ' + Bumper1Proprieties.z);
-          // Bumper2.setAttribute('position', Bumper2Proprieties.x + ' ' + Bumper2Proprieties.y + ' ' + Bumper2Proprieties.z);
-          // restaurar material caso tenha sido alterado no game over
-          model.setAttribute('material', 'color: white;');
+
         } catch (e) {
           console.warn('Erro ao aplicar reset de posições:', e);
         }
@@ -123,17 +142,18 @@
         // start = true; // descomente se quiser reiniciar imediatamente mesmo sem recolher markerFound
       }
 
-
-
-
       // preparar bounding boxes (reutilizadas a cada tick)
       var bboxModel = new THREE.Box3();
       var bboxB1 = new THREE.Box3();
 
+      // ajuste de colisão (metros). Use valor POSITIVO para encolher a caixa
+      // (aplicamos expandByScalar com valor NEGATIVO para reduzir a caixa)
+      var collisionPadding = 0.1; // diminuir para ser mais permissivo, aumentar para ser mais restrito
+
       // saber quando o modelo glTF está pronto
       model.addEventListener('model-loaded', () => {
         modelLoaded = true;
-        console.log('model-loaded');
+
       });
 
       // pontuação a cada segundo enquanto start for true
@@ -141,6 +161,7 @@
         if (start != false && gameOver == false) {
           pontuacao += 1;
           score.innerHTML = "Pontuação: " + pontuacao;
+          bumperSpeed += 0.002; // aumentar a velocidade com o tempo
         }
       }, 1000);
 
@@ -162,15 +183,11 @@
           }
 
           // mover bumpers (cada um com velocidade/leitura simples)
-          Bumper1Proprieties.x -= 0.05;
+          Bumper1Proprieties.x -= bumperSpeed;
           if (Bumper1Proprieties.x < -2) {
             Bumper1Proprieties.x = 3;
           }
 
-          // Bumper2Proprieties.x -= 0.04;
-          // if (Bumper2Proprieties.x < -2.5) {
-          //   Bumper2Proprieties.x = 3.5;
-          // }
 
           // aplicar posições aos elementos na cena
           Bumper1.setAttribute('position', Bumper1Proprieties.x + ' ' + Bumper1Proprieties.y + ' ' + Bumper1Proprieties.z);
@@ -184,14 +201,16 @@
               bboxModel.setFromObject(model.object3D);
               bboxB1.setFromObject(Bumper1.object3D);
 
+              // encolhe as caixas uniformemente em todos os eixos
+              bboxB1.expandByScalar(-collisionPadding);
 
               if (bboxModel.intersectsBox(bboxB1)) {
                 // colisão detectada
                 gameOver = true;
                 console.log('Colisão detectada! Game over.');
                 score.innerHTML = "Game Over! Pontuação: " + pontuacao;
-                // opcional: marcar visualmente o modelo
-                model.setAttribute('material', 'color: red;');
+                if (finalScore) finalScore.textContent = "Pontuação: " + pontuacao;
+                if (gameOverUI) gameOverUI.style.display = 'flex';
               }
             } catch (e) {
               // em alguns casos object3D não está pronto; ignorar erros temporários
